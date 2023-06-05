@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  sftpserver:
+    image: atmoz/sftp:latest
+    container_name: sftpserver
+    hostname: sftpserver
+    ports:
+      - "2222:22"
+    networks:
+      - sftp-csv2json-net
+    command:
+      - foo:pass:1001::upload   # syntax: user:password[:e][:uid[:gid[:dir1[,dir2]...]]]
+    volumes:
+      - ./sftp-upload:/home/foo/upload
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: sftp-csv2json
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SFTP_HOST=sftpserver
+      - SFTP_PORT=22
+      - SFTP_USERNAME=foo
+      - SFTP_PASSWORD=pass
+      - SFTP_PATH_IN=upload/
+      - SFTP_PATH_OUT=upload/transform/
+      - CSV_DELIMITER=,
+    networks:
+      - sftp-csv2json-net
+    depends_on:
+      - sftpserver
+networks:
+  sftp-csv2json-net:
+    driver: bridge
