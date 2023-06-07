@@ -1,0 +1,43 @@
+version: "3.7"
+
+services:
+  sftpserver:
+    image: atmoz/sftp:latest
+    container_name: sftpserver
+    hostname: sftpserver
+    ports:
+      - "2222:22"
+    networks:
+      - sftp-copy-net
+    command:
+      - foo::1001::upload   # syntax: user:password[:e][:uid[:gid[:dir1[,dir2]...]]]
+    volumes:
+      - ./sftp-upload:/home/foo/upload
+      - ./keys/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - ./keys/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+      - ./keys/ssh_host_ed25519_key.pub:/home/foo/.ssh/keys/ssh_host_ed25519_key.pub:ro
+      - ./keys/ssh_host_rsa_key.pub:/home/foo/.ssh/keys/ssh_host_rsa_key.pub:ro
+
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: ssh-sftp-copy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SFTP_HOST=sftpserver
+      - SFTP_PORT=22
+      - SFTP_USERNAME=foo
+      #- SFTP_PASSWORD=pass
+      - SFTP_PATH_IN=upload/
+      - SFTP_PATH_OUT=upload/backup/
+      - SFTP_SSH_KEYPATH=/etc/ssh/ssh_host_ed25519_key
+    networks:
+      - sftp-copy-net
+    depends_on:
+      - sftpserver
+    volumes:
+      - ./keys/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+networks:
+  sftp-copy-net:
+    driver: bridge
