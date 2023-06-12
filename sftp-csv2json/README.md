@@ -1,5 +1,5 @@
-# SFTP Copy
-An Apache Camel route to map CSV rows from an SFTP source directory to JSON rows to a target SFTP directory.
+# SFTP CSV to JSON
+An [Apache Camel](https://camel.apache.org/) route to map CSV rows from an SFTP source directory to JSON rows to a target SFTP directory.
 
 ## How to
 ### 1. Clone the application
@@ -18,16 +18,16 @@ Then we build the packages
 ./mvnw -V -B -DskipTests clean package verify
 ```
 #### 3. Run the application
-The application requires an sftp service (an sftp service based on [atmoz/sftp](https://hub.docker.com/r/atmoz/sftp) is present in the `docker-compose.yml`), there are two spring profiles local and docker. The docker profile is configured to use the services run via `docker-compose`. If you wish to use the docker profile (the easier approach), please refer the `docker-compose.yml`. 
+The application requires an SFTP service (an SFTP service based on [atmoz/sftp](https://hub.docker.com/r/atmoz/sftp) is present in the `docker-compose.yml`), there are two spring profiles `local` and `docker`. The `docker` profile is configured to use the services run via `docker-compose`. If we wish to use the `docker` profile (the easier approach), we can refer the `docker-compose.yml`. 
 
-**Note**: Before starting the `docker-compose` please check that env variable `CSV_DELIMITER` reflects the correct delimeter (i.e. comma, semicolon etc.). It is set to comma by default.
+**Note**: Before starting the `docker-compose` we need to check that the env variable `CSV_DELIMITER` reflects the correct delimeter (i.e. comma, semicolon etc.). It is set to comma by default.
 
-For using the docker profile simply run:
+For using the docker profile we can simply run:
 ```bash
 docker-compose up -d
 ```
 #### 3a. Run the application locally
-For the local spring profile you need to start your own sftp service. The SFTP service can be run by:
+For the `local` spring profile we need to start our own SFTP service. The SFTP service can be run by:
 ```bash
 docker run --name sftp1 -v $PWD/<src_dir>:/home/<user_name1>/<src_dir> -p 2221:22 -d atmoz/sftp <user_name1>:<password1>:::<src_dir>
 docker run --name sftp2 -v $PWD/<target_dir>:/home/<user_name2>/<target_dir> -p 2222:22 -d atmoz/sftp <user_name2>:<password2>:::<target_dir>
