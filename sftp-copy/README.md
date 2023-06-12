@@ -1,5 +1,5 @@
 # SFTP Copy
-An Apache Camel route to copy from one sftp source to another sftp target.
+An [Apache Camel](https://camel.apache.org/) route to copy from one SFTP source to another SFTP target.
 
 ## How to
 ### 1. Clone the application
@@ -18,13 +18,13 @@ Then we build the packages
 ./mvnw -V -B -DskipTests clean package verify
 ```
 #### 3. Run the application
-The application requires an sftp service (an sftp service based on [atmoz/sftp](https://hub.docker.com/r/atmoz/sftp) is present in the `docker-compose.yml`), there are two spring profiles local and docker. The docker profile is configured to use the services run via `docker-compose`. If you wish to use the docker profile (the easier approach), please refer the `docker-compose.yml`.
-For using the docker profile simply run:
+The application requires an SFTP service (an SFTP service based on [atmoz/sftp](https://hub.docker.com/r/atmoz/sftp) is present in the `docker-compose.yml`), there are two spring profiles `local` and `docker`. The `docker` profile is configured to use the services that run via `docker-compose`. If we wish to use the `docker` profile (the easier approach), we can refer the `docker-compose.yml`.
+For using the docker profile we can simply run:
 ```bash
 docker-compose up -d
 ```
 #### 3a. Run the application locally
-For the local spring profile you need to start your own sftp service. The SFTP service can be run by:
+For the `local` spring profile we need to start out own SFTP service. The SFTP service can be run by:
 ```bash
 docker run --name sftp1 -v $PWD/<src_dir>:/home/<user_name1>/<src_dir> -p 2221:22 -d atmoz/sftp <user_name1>:<password1>:::<src_dir>
 docker run --name sftp2 -v $PWD/<target_dir>:/home/<user_name2>/<target_dir> -p 2222:22 -d atmoz/sftp <user_name2>:<password2>:::<target_dir>
@@ -48,7 +48,7 @@ Then we rebuild our package:
 ```bash
 ./mvnw -V -B -DskipTests clean package verify
 ```
-**Note**: You can also run a single SFTP service that can double up as a source and the destination. Please ensure then that the `<target_dir>` is a subdirectory under the `<src_dir>`, else there might be IO/permission issues . E.g.
+**Note**: We can also run a single SFTP service that can double up as a source and the destination. But we need to ensure that the `<target_dir>` is a subdirectory under the `<src_dir>`, else there might be IO/permission issues. E.g.
 ```bash
 docker run --name sftpserv -v $PWD/<src_dir>:/home/<user_name>/<src_dir> -p 2222:22 -d atmoz/sftp <user_name>:<password>:::<src_dir>
 ```
@@ -65,17 +65,17 @@ app.sftp.output.remote-dir=<src_dir>/<target_dir>
 app.sftp.output.username=<user_name>
 app.sftp.output.password=<password>
 ```
-To avoid permission issues we also need to give the docker user (in this case ) the ownership top our local `<src_dir>` and `<target_dir>`.
+To avoid permission issues we also need to give the docker user (in this case 1001) the ownership to our local `<src_dir>` and `<target_dir>`.
 ```bash
 sudo chown 1001:1001 <src_dir>
 sudo chown 1001:1001 <target_dir>
 ```
-Then start the application using
+Then we can start the application using
 ```bash
-../mvnw spring-boot:run -Dspring-boot.run.profiles=local
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 ```
 #### 4. Upload the files
-Once application is started the endpoint available at 
+Once the application is started the endpoint is available: 
 - Either at `sftp:\\localhost:2221` and `sftp:\\localhost:2222` (in case 2 SFTP services are started).
 - Or at `sftp:\\localhost:2222` (in case 1 SFTP service is started locally or via `docker-compose`). 
 
@@ -84,7 +84,7 @@ We can now upload our files at this endpoint:
 - via the `scp` command
 - copying files directly to the local `<src_dir>`
 
-Once files are present at the source destination the application automatically should copy the files to the destination.
+Once the files are present at the source destination, the application should automatically copy the files to the destination.
 
 #### 4. Stop the application
 - If the applications was started via `docker-compose` then it can be stopped using.
@@ -96,6 +96,3 @@ In case the volumes need to be removed we can use:
 docker-compose down --volumes
 ```
 - If the application was started locally please ensure the SFTP service(s) are stopped after stopping the application.
-
-
-
