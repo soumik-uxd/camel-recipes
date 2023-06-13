@@ -24,7 +24,7 @@ For using the docker profile we can simply run:
 docker-compose up -d
 ```
 #### 3a. Run the application locally
-For the `local` spring profile we need to start out own SFTP service. The SFTP service can be run by:
+For the `local` spring profile we need to start our own SFTP service. The SFTP service can be run by:
 ```bash
 docker run --name sftp1 -v $PWD/<src_dir>:/home/<user_name1>/<src_dir> -p 2221:22 -d atmoz/sftp <user_name1>:<password1>:::<src_dir>
 docker run --name sftp2 -v $PWD/<target_dir>:/home/<user_name2>/<target_dir> -p 2222:22 -d atmoz/sftp <user_name2>:<password2>:::<target_dir>
