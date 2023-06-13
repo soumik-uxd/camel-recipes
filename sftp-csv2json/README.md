@@ -98,4 +98,4 @@ In case the volumes need to be removed we can use:
 ```bash
 docker-compose down --volumes
 ```
-- If the application was started locally please ensure the SFTP service(s) are stopped after stopping the application.
+- If the application was started locally please ensure that the SFTP service(s) are stopped after stopping the application.
